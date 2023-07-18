@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_drc_echo_test_user,drc.echo.test,model_drc_echo_test,group_drc_echo_management_user,1,1,1,1
+access_drc_echo_patient_user,drc.echo.patient,model_drc_echo_patient,group_drc_echo_management_user,1,1,1,1
+access_drc_echo_test_section_unit_user,drc.echo.test.section.unit,model_drc_echo_test_section_unit,group_drc_echo_management_user,1,1,1,1
+access_drc_echo_test_section_template_user,drc.echo.test.section.template,model_drc_echo_test_section_template,group_drc_echo_management_user,1,1,1,1
+access_drc_echo_test_section_attribute_user,drc.echo.test.section.attribute,model_drc_echo_test_section_attribute,group_drc_echo_management_user,1,1,1,1

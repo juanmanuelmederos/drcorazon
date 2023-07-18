@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <record model="ir.module.category" id="module_category_drc_echo_management">
+        <field name="name">Drc Management</field>
+     </record>
+
+     <record id="group_drc_echo_management_user" model="res.groups">
+         <field name="name">Drc Echo User</field>
+         <field name="category_id" ref="module_category_drc_echo_management"/>
+         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+     </record>
+
+    <record id="group_drc_echo_management_technician" model="res.groups">
+         <field name="name">Drc Echo Manager</field>
+         <field name="category_id" ref="module_category_drc_echo_management"/>
+         <field name="implied_ids" eval="[(4, ref('group_drc_echo_management_user'))]"/>
+         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+     </record>
+
+</odoo>
