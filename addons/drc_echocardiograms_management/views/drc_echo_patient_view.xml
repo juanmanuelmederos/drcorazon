@@ -2,6 +2,7 @@
 <odoo>
     <data>
         <menuitem id="menu_root_echo" name="Ecocardiogramas" sequence="40"
+                  web_icon="drc_echocardiograms_management,static/description/icon.png"
                   />
         <record model="ir.ui.view" id="kanban_view_patient">
             <field name="name">Patient Kanban</field>
