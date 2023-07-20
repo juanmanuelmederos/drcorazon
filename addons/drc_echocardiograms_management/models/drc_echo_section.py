@@ -20,7 +20,7 @@
 #
 #############################################################################
 
-from odoo import models, fields
+from odoo import models, fields, api
 
 DENOMINATION_TYPE = [
     ('sa', 'APROXIMACIONES PARAESTERNALES'),
@@ -36,21 +36,35 @@ class DrcEchoTestSectionTemplate(models.Model):
     _description = "Secciones plantillas de mediciones en la evaluación de ecocardiogramas"
     _inherit = ['mail.thread']
 
-    name = fields.Char(string="Sección", required=True, help="Name of lab test")
+    name = fields.Char(string="Sección", required=True, help="Nombre de la sección de análisis")
     section_code = fields.Char(string="Test Code", required=True)
-    test_lines = fields.One2many('drc.echo.test.section.attribute', 'section_id', string="Attribute")
-    section_code_type = fields.Selection(DENOMINATION_TYPE, string="Tipo de aproximación", default='0')
+    attribute_ids = fields.One2many('drc.echo.test.section.attribute', 'section_id', string="Attribute")
+    denomination_type = fields.Selection(DENOMINATION_TYPE, string="Tipo de aproximación", default='0')
 
+
+    @api.model
+    def create(self, values):
+        # Add code here
+        res = super(DrcEchoTestSectionTemplate, self).create(values)
+        res.attribute_ids.write({'is_template': True})
+        return res
+
+    def write(self, values):
+        res = super(values, self).write(values)
+        self.attribute_ids.write({'is_template': True})
+        return res
 
 class DrcEchoTestSectionAttribute(models.Model):
     _name = 'drc.echo.test.section.attribute'
     _rec_name = 'section_value'
     _description = "Atributos de mediciones en la evaluación de ecocardiogramas"
 
-    section_value = fields.Char(string="Valor")
-    section_code_type = fields.Selection(DENOMINATION_TYPE, string="Tipo de aproximación", default='0')
-    unit = fields.Many2one('drc.echo.test.section.unit', string="Unidad")
-    interval = fields.Char(string="Intervalo de referencia")
+    section_value = fields.Char(string="N.Variable")
+    denomination_type = fields.Selection(DENOMINATION_TYPE, string="Tipo de aproximación")
+    unit = fields.Many2one('drc.echo.test.section.unit', string="UM")
+    result_value = fields.Char(string="Valor")
+    interval = fields.Char(string="Intervalo R")
     section_id = fields.Many2one('drc.echo.test.section.template', string="Plantilla de sección")
     echo_test_id = fields.Many2one('drc.echo.test', string="Prueba de ecocardiograma")
+    is_template = fields.Boolean(string="Es plantilla")
 

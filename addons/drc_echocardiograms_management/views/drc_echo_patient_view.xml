@@ -30,7 +30,7 @@
             </field>
         </record>
 
-        <record id="view_drc.echo.patient_tree" model="ir.ui.view">
+        <record id="view_drc_echo_patient_tree" model="ir.ui.view">
             <field name="name">drc.echo.patient.tree</field>
             <field name="model">drc.echo.patient</field>
             <field name="priority" eval="8" />
@@ -126,7 +126,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="act_open_echo_patient_view">
-            <field name="name">Patients</field>
+            <field name="name">Datos de paciente</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">drc.echo.patient</field>
             <field name="view_mode">kanban,tree,form</field>
@@ -148,10 +148,10 @@
             <field name="company_id" eval="False" />
         </record>
 
-        <menuitem id="menu_echo_patient" name="Patient" sequence="10"
+        <menuitem id="menu_echo_patient" name="Pacientes" sequence="90"
             parent="menu_root_echo" />
 
-        <menuitem id="menu_echo_patient_child" name="Patient" sequence="10"
+        <menuitem id="menu_echo_patient_child" name="Listado de pacientes" sequence="10"
                   parent="menu_echo_patient" action="act_open_echo_patient_view"
                   />
 

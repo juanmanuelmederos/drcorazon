@@ -1,41 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-        <record id="view_lab_test_tree" model="ir.ui.view">
-            <field name="name">lab.test.tree</field>
-            <field name="model">lab.test</field>
+        <record id="view_echo_test_section_tree" model="ir.ui.view">
+            <field name="name">drc.echo.test.section.tree</field>
+            <field name="model">drc.echo.test.section.template</field>
             <field name="priority" eval="8" />
             <field name="arch" type="xml">
-                <tree string="Lab Test">
-                    <field name="lab_test" />
-                    <field name="lab_test_code" />
-                    <field name="test_cost" />
+                <tree string="Datos de secciónes">
+                    <field name="name" />
+                    <field name="section_code" />
+                    <field name="denomination_type" />
                 </tree>
             </field>
         </record>
 
-        <record id="view_lab_test_form" model="ir.ui.view">
-            <field name="name">lab.test.form</field>
-            <field name="model">lab.test</field>
+        <record id="view_echo_test_section_form" model="ir.ui.view">
+            <field name="name">drc.echo.test.section.form</field>
+            <field name="model">drc.echo.test.section.template</field>
             <field name="priority" eval="8" />
             <field name="arch" type="xml">
-                <form string="Lab Test">
+                <form string="Sección">
                     <sheet>
                         <group>
                             <group col="4" colspan="4">
-                                <field name="lab_test" />
-                                <field name="lab_test_code"/>
-                                <field name="test_cost" />
+                                <field name="name" />
+                                <field name="section_code" />
+                               <field name="denomination_type" />
                             </group>
                         </group>
                         <notebook>
-                           <page string="Lab Test Type" style="overflow-x:scroll;">
+                           <page string="Variables de secciónes" style="overflow-x:scroll;">
 
-                                   <field name="test_lines" nolabel="1">
-                                       <tree string="Lab Test Type" editable="bottom">
-                                           <field name="test_content" />
-                                           <field name="unit"/>
+                                   <field name="attribute_ids" nolabel="1"
+                                          context="{'default_denomination_type': denomination_type,
+                                          'default_is_template':1}">
+                                       <tree string="Variables" editable="bottom">
+                                           <field name="section_value" />
+                                           <field name="unit" />
                                            <field name="interval"/>
+                                           <field name="denomination_type"/>
+                                           <field name="is_template"/>
                                        </tree>
                                    </field>
                            </page>
@@ -45,51 +49,52 @@
             </field>
         </record>
 
-        <record id="view_lab_test_search" model="ir.ui.view">
-            <field name="name">lab.test.search</field>
-            <field name="model">lab.test</field>
+        <record id="view_echo_test_section_search" model="ir.ui.view">
+            <field name="name">drc.echo.test.section.search</field>
+            <field name="model">drc.echo.test.section.template</field>
             <field name="priority" eval="8" />
             <field name="arch" type="xml">
-                <search string="Lab Test">
-                    <field name="lab_test" />
+                <search string="Secciones">
+                    <field name="name" />
+                    <field name="denomination_type"/>
                     <newline />
-                    <group expand="0" string="Group By...">
-                        <filter name="lab_test" string="Test"
-                            domain="[]" context="{'group_by':'lab_test'}" />
+                    <group expand="0" string="Agrupar por...">
+                        <filter name="denomination_type" string="Tipo de Sección"
+                            domain="[]" context="{'group_by':'denomination_type'}" />
                     </group>
                 </search>
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="act_open_lab_test_view">
-            <field name="name">Lab Test</field>
+        <record model="ir.actions.act_window" id="act_open_echo_test_section_view">
+            <field name="name">Secciónes</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">lab.test</field>
+            <field name="res_model">drc.echo.test.section.template</field>
             <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_lab_test_search" />
+            <field name="search_view_id" ref="view_echo_test_section_search" />
             <field name="domain">[]</field>
             <field name="context">{}</field>
             <field name="help" type="html">
                 <p class="oe_view_nocontent_create">
-                    Create Lab Tests.
+                   Crear plantillas de secciones de prueba.
                 </p>
             </field>
         </record>
 
-        <menuitem id="menu_lab_test" name="Lab Test" sequence="1"
-                  parent="configuration_id" action="act_open_lab_test_view"
-                  groups="group_lab_management_user,group_lab_management_technician"/>
+        <menuitem id="menu_echo_test_section" name="Plantilla de Secciones" sequence="1"
+                  parent="configuration_id" action="act_open_echo_test_section_view"
+                  groups="group_drc_echo_management_user"/>
 
-        <record id="view_lab_test_attribute_form" model="ir.ui.view">
-        <field name="name">lab.test.attribute.form</field>
-        <field name="model">lab.test.attribute</field>
+        <record id="view_echo_test_section_attribute_form" model="ir.ui.view">
+        <field name="name">drc.echo.test.section.attribute.form</field>
+        <field name="model">drc.echo.test.section.attribute</field>
         <field name="priority" eval="8" />
         <field name="arch" type="xml">
-                <form string="Lab Test Type Attribute">
+                <form string="Variables de secciones">
                     <group>
                         <group col="4" colspan="4">
-                            <field name="test_content" />
-                            <field name="result"/>
+                            <field name="section_value" />
+                            <field name="denomination_type"/>
                             <field name="unit" />
                             <field name="interval"/>
                         </group>

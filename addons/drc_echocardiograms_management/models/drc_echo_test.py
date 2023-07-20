@@ -31,54 +31,54 @@ class DrcEchoTest(models.Model):
     _description = 'Echocardiology Test'
 
     name = fields.Char(string='Código', size=16, readonly=True, required=True, help="ID de prueba", default=lambda *a: '#')
-    test_patient_id = fields.Many2one('drc.echo.patient', string='Paciente', select=True,
+    patient_id = fields.Many2one('drc.echo.patient', string='Paciente', select=True,
                                     help='Datos del paciente')
-    date = fields.Datetime(string='Requested Date')
-    comment = fields.Text('Comment')
+    date = fields.Datetime(string='Fecha', default=datetime.datetime.now())
+    comment = fields.Text('Observaciones')
 
     template_sa_id = fields.Many2one('drc.echo.test.section.template',
                                   string='Plantilla sección sa',
-                                  domain=[('section_code_type', '=', 'sa')])
+                                  domain=[('denomination_type', '=', 'sa')])
 
     attribute_value_line_sa_ids = fields.One2many('drc.echo.test.section.attribute',
                                               'echo_test_id',
                                               string="Valores sección SA",
-                                              domain=[('section_code_type', '=', 'sa')])
+                                              domain=[('denomination_type', '=', 'sa')])
 
     template_sb_id = fields.Many2one('drc.echo.test.section.template',
                                   string='Plantilla sección sb',
-                                  domain=[('section_code_type', '=', 'sb')])
+                                  domain=[('denomination_type', '=', 'sb')])
 
     attribute_value_line_sb_ids = fields.One2many('drc.echo.test.section.attribute',
                                               'echo_test_id',
                                               string="Valores sección SB",
-                                              domain=[('section_code_type', '=', 'sb')])
+                                              domain=[('denomination_type', '=', 'sb')])
 
     template_sc_id = fields.Many2one('drc.echo.test.section.template',
                                   string='Plantilla sección sc',
-                                  domain=[('section_code_type', '=', 'sc')])
+                                  domain=[('denomination_type', '=', 'sc')])
 
     attribute_value_line_sc_ids = fields.One2many('drc.echo.test.section.attribute',
                                               'echo_test_id',
                                               string="Valores sección SC",
-                                              domain=[('section_code_type', '=', 'sc')])
+                                              domain=[('denomination_type', '=', 'sc')])
 
     template_sd_id = fields.Many2one('drc.echo.test.section.template',
                                   string='Plantilla sección sd',
-                                  domain=[('section_code_type', '=', 'sd')])
+                                  domain=[('denomination_type', '=', 'sd')])
 
     attribute_value_line_sd_ids = fields.One2many('drc.echo.test.section.attribute',
                                               'echo_test_id',
                                               string="Valores sección SD",
-                                              domain=[('section_code_type', '=', 'sd')])
+                                              domain=[('denomination_type', '=', 'sd')])
 
     template_se_id = fields.Many2one('drc.echo.test.section.template',
                                   string='Plantilla sección se',
-                                  domain=[('section_code_type', '=', 'se')])
+                                  domain=[('denomination_type', '=', 'se')])
     attribute_value_line_se_ids = fields.One2many('drc.echo.test.section.attribute',
                                               'echo_test_id',
                                               string="Valores sección SE",
-                                              domain=[('section_code_type', '=', 'se')])
+                                              domain=[('denomination_type', '=', 'se')])
     state = fields.Selection([
         ('draft', 'Draft'),
         ('sample_collection', 'Sample Collected'),
@@ -93,6 +93,22 @@ class DrcEchoTest(models.Model):
         sequence = self.env['ir.sequence'].next_by_code('drc.echo.request')
         vals['name'] = sequence or '/'
         return super(DrcEchoTest, self).create(vals)
+
+    @api.onchange('template_sa_id', 'template_sb_id', 'template_sc_id', 'template_sd_id', 'template_se_id')
+    def onchange_section_template(self):
+        prefix_list = ['sa', 'sb', 'sc', 'sd', 'se']
+        for prefix in prefix_list:
+            template_id = self['template_' + prefix + '_id']
+            if template_id:
+                self['attribute_value_line_' + prefix + '_ids'] = [(5, 0, 0)]
+                for attribute in template_id.attribute_ids.filtered(lambda r: r.is_template):
+                    self['attribute_value_line_' + prefix + '_ids'] = [(0, 0, {
+                        'section_value': attribute.section_value,
+                        'unit': attribute.unit,
+                        'interval': attribute.interval,
+                        'denomination_type': prefix,
+                        'is_template': False,
+                    })]
 
     def set_to_sample_collection(self):
         return self.write({'state': 'sample_collection'})
