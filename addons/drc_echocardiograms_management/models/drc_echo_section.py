@@ -31,6 +31,14 @@ DENOMINATION_TYPE = [
 ]
 
 
+SECTION_PRIORITY = [
+    ('0', 'Baja'),
+    ('1', 'Media'),
+    ('2', 'Alta'),
+]
+
+
+
 class DrcEchoTestSectionTemplate(models.Model):
     _name = 'drc.echo.test.section.template'
     _description = "Secciones plantillas de mediciones en la evaluación de ecocardiogramas"
@@ -40,6 +48,7 @@ class DrcEchoTestSectionTemplate(models.Model):
     section_code = fields.Char(string="Test Code", required=True)
     attribute_ids = fields.One2many('drc.echo.test.section.attribute', 'section_id', string="Attribute")
     denomination_type = fields.Selection(DENOMINATION_TYPE, string="Tipo de aproximación", default='0')
+    priority = fields.Selection(SECTION_PRIORITY, string="Prioridad", default='0')
 
 
     @api.model
@@ -50,7 +59,7 @@ class DrcEchoTestSectionTemplate(models.Model):
         return res
 
     def write(self, values):
-        res = super(values, self).write(values)
+        res = super(DrcEchoTestSectionTemplate, self).write(values)
         self.attribute_ids.write({'is_template': True})
         return res
 

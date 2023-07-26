@@ -19,16 +19,18 @@
             <field name="arch" type="xml">
                 <form string="Prueba eco">
                     <header>
-                        <button name="set_to_sample_collection" states="draft" string="Capturada" type="object"
+                        <button name="set_to_review" states="draft" string="A revisión" type="object"
                                 class="oe_highlight"/>
-                        <button name="set_to_test_in_progress" states="sample_collection" string="En progreso"
-                                type="object" class="oe_highlight"/>
+                        <button name="set_to_completed" states="review" string="Completar" type="object"
+                                class="oe_highlight"/>
+                         <button name="set_to_draft" states="review" string="Llevar a captura" type="object"
+                                />
                         <button name="print_lab_test" states="completed" string="Imprimir resultado" type="object"
                                 class="oe_highlight"/>
-                        <button name="cancel_test" states="draft" string="Cancelar" type="object"/>
+                        <button name="cancel_test" states="draft" string="Cancelar" type="objec t"/>
                         <field name="state" widget="statusbar"
-                               statusbar_visible="draft,sample_collection,test_in_progress,completed"
-                               statusbar_colors='{"Completed":"blue","Test In Progress":"red","Invoiced":"grey"}'/>
+                               statusbar_visible="draft,review,completed"
+                               statusbar_colors='{"Completed":"blue","review":"red","draft":"grey"}'/>
                     </header>
                     <sheet>
                         <div class="oe_left" style="width: 500px;">
@@ -41,95 +43,113 @@
                         </div>
                         <group>
                             <group col="4" colspan="4">
-                                <field name="patient_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="patient_id" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="date"/>
                             </group>
                         </group>
-                        <notebook colspan="4">
-                            <page string="Sección A">
+                        <notebook colspan="4"  attrs="{'invisible': [('state', '!=', 'draft')]}">
+                            <page string="APEs">
                                 <group>
                                     <group>
-                                        <field name="template_sa_id"
-                                               string="Plantilla de APROXIMACIONES PARAESTERNALES"/>
+                                            <field name="template_sa_id" string=" "
+                                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+
                                     </group>
-                                    <group>
+                                     <group>
                                     </group>
                                 </group>
                                 <field name="attribute_value_line_sa_ids">
-                                    <tree string="Variables de sección" editable="bottom">
+                                    <tree string="Variables de sección" create="0" editable="bottom">
                                         <field name="result_value"/>
                                         <field name="section_value"/>
                                         <field name="unit"/>
                                         <field name="interval"/>
-                                        <field name="denomination_type" invisible="0" force_save="1"/>
+                                        <field name="denomination_type" invisible="1" force_save="1"/>
 
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Sección B">
+                            <page string="AAPs">
                                  <group>
                                     <group>
-                                        <field name="template_sb_id" string="Plantilla de APROXIMACIONES APICALES"/>
+                                        <field name="template_sb_id" string=" "/>
                                     </group>
                                     <group>
                                     </group>
                                 </group>
                                 <field name="attribute_value_line_sb_ids">
-                                    <tree string="Variables de sección" editable="bottom">
+                                    <tree string="Variables de sección" create="0" editable="bottom">
                                         <field name="result_value"/>
                                         <field name="section_value"/>
                                         <field name="unit"/>
                                         <field name="interval"/>
-                                        <field name="denomination_type" invisible="0" force_save="1"/>
+                                        <field name="denomination_type" invisible="1" force_save="1"/>
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Sección C">
+                            <page string="ASCs">
                                 <group>
                                     <group>
-                                        <field name="template_sc_id" string="Plantilla de APROXIMACIONES SUBCOSTALES"/>
+                                        <field name="template_sc_id" string=" "/>
                                     </group>
                                     <group>
                                     </group>
                                 </group>
                                 <field name="attribute_value_line_sc_ids">
-                                    <tree string="Variables de sección" editable="bottom">
+                                    <tree string="Variables de sección" create="0" editable="bottom">
                                         <field name="result_value"/>
                                         <field name="section_value"/>
                                         <field name="unit"/>
                                         <field name="interval"/>
-                                        <field name="denomination_type" invisible="0" force_save="1"/>
+                                        <field name="denomination_type" invisible="1" force_save="1"/>
                                     </tree>
                                 </field>
                             </page>
                             <page string="Sección D">
                                 <group>
                                     <group>
-                                        <field name="template_sd_id" string="Plantilla de APROXIMACIONES SUPRAESTERNALES"/>
+                                        <field name="template_sd_id" string=" "/>
                                     </group>
                                     <group>
                                     </group>
                                 </group>
                                 <field name="attribute_value_line_sd_ids">
-                                    <tree string="Variables de sección" editable="bottom">
+                                    <tree string="Variables de sección" create="0" editable="bottom">
                                         <field name="result_value"/>
                                         <field name="section_value"/>
                                         <field name="unit"/>
                                         <field name="interval"/>
-                                        <field name="denomination_type" invisible="0" force_save="1"/>
+                                        <field name="denomination_type" invisible="1" force_save="1"/>
                                     </tree>
                                 </field>
                             </page>
                             <page string="Sección E">
                                 <group>
                                     <group>
-                                        <field name="template_se_id" string="Plantilla de OTRAS APROXIMACIONES"/>
+                                        <field name="template_se_id" string=" "/>
                                     </group>
                                     <group>
                                     </group>
                                 </group>
                                 <field name="attribute_value_line_se_ids">
-                                    <tree string="Variables de sección" editable="bottom">
+                                    <tree string="Variables de sección" create="0" editable="bottom">
+                                        <field name="result_value"/>
+                                        <field name="section_value"/>
+                                        <field name="unit"/>
+                                        <field name="interval"/>
+                                        <field name="denomination_type" invisible="1" force_save="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="Note"
+                                  string="Notas">
+                                <field name="comment"/>
+                            </page>
+                        </notebook>
+                         <notebook colspan="4"  attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <page string="Revisión resultados">
+                                <field name="attribute_value_line_all_ids">
+                                    <tree string="Variables de sección" create="0" editable="bottom">
                                         <field name="result_value"/>
                                         <field name="section_value"/>
                                         <field name="unit"/>
@@ -137,10 +157,6 @@
                                         <field name="denomination_type" invisible="0" force_save="1"/>
                                     </tree>
                                 </field>
-                            </page>
-                            <page name="Note"
-                                  string="Notas">
-                                <field name="comment"/>
                             </page>
                         </notebook>
                     </sheet>

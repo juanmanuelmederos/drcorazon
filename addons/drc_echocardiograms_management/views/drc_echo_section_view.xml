@@ -26,6 +26,7 @@
                                 <field name="name" />
                                 <field name="section_code" />
                                <field name="denomination_type" />
+                                <field name="priority" optional="show" widget="priority"/>
                             </group>
                         </group>
                         <notebook>

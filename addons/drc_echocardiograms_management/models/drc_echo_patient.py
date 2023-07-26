@@ -29,32 +29,37 @@ class DrcEchoPatient(models.Model):
     _rec_name = 'patient'
     _description = 'Patient'
 
-    patient = fields.Many2one('res.partner', string='Partner', required=True)
-    patient_image = fields.Binary(string='Photo')
-    patient_id = fields.Char(string='Patient ID', readonly=True)
-    name = fields.Char(string='Patient ID', default=lambda self: _('New'))
+    patient = fields.Many2one('res.partner', string='Nombre del paciente', required=True)
+    patient_image = fields.Binary(string='Foto')
+    patient_id = fields.Char(string='ID del paciente', readonly=True)
+    name = fields.Char(string='ID del paciente', compute='compute_patient_id', store=True)
+    first_name = fields.Char(string='', default=lambda self: _('New'))
+    second_name = fields.Char(string='', default=lambda self: _('New'))
+    middle_dad_name = fields.Char(string='', default=lambda self: _('New'))
+    last_mom_name = fields.Char(string='', default=lambda self: _('New'))
     title = fields.Selection([
-         ('ms', 'Miss'),
-         ('mister', 'Mister'),
-         ('mrs', 'Mrs'),
+         ('ms', 'Sra'),
+         ('mister', 'Sr'),
     ], string='Title', default='mister', required=True)
     emergency_contact = fields.Many2one(
         'res.partner', string='Emergency Contact')
     gender = fields.Selection(
-        [('m', 'Male'), ('f', 'Female'),
-         ('ot', 'Other')], 'Gender', required=True)
-    dob = fields.Date(string='Date Of Birth', required=True)
-    age = fields.Char(string='Age', compute='compute_age', store=True)
+        [('h', 'Hombre'), ('m', 'Mujer'),
+         ('o', 'Otro')], 'Género', required=False, default='m')
+    dob = fields.Date(string='Fecha de nacimiento', required=False)
+    age = fields.Char(string='Edad', compute='compute_age', store=True)
     blood_group = fields.Selection(
         [('A+', 'A+ve'), ('B+', 'B+ve'), ('O+', 'O+ve'), ('AB+', 'AB+ve'),
          ('A-', 'A-ve'), ('B-', 'B-ve'), ('O-', 'O-ve'), ('AB-', 'AB-ve')],
         'Blood Group')
     visa_info = fields.Char(string='Visa Info', size=64)
-    id_proof_number = fields.Char(string='ID Proof Number')
-    note = fields.Text(string='Note')
+    id_proof_number = fields.Char(string='ID de prueba')
+    note = fields.Text(string='Nota')
     date = fields.Datetime(string='Date Requested', default=lambda s: fields.Datetime.now(), invisible=True)
-    phone = fields.Char(string="Phone", required=True)
-    email = fields.Char(string="Email", required=True)
+    phone = fields.Char(string="Teléfono", required=False)
+    email = fields.Char(string="Correo", required=False)
+    weight = fields.Float(string="Peso", required=False)
+    size = fields.Char(string="Talla", required=False)
 
     @api.depends('dob')
     def compute_age(self):
@@ -67,12 +72,23 @@ class DrcEchoPatient(models.Model):
             else:
                 data.age = ''
 
-    @api.model
-    def create(self, vals):
-        sequence = self.env['ir.sequence'].next_by_code('lab.patient')
-        vals['name'] = sequence or _('New')
-        result = super(DrcEchoPatient, self).create(vals)
-        return result
+    @api.depends('dob', 'gender')
+    def compute_patient_id(self):
+        for data in self:
+            if data.dob:
+                dob = fields.Datetime.from_string(data.dob)
+                data.name = str(data.gender[0].upper()) + str(dob.year)[2:] \
+                            + str(dob.month).zfill(2) + str(dob.day).zfill(2)
+
+    @api.onchange('gender')
+    def onchange_gender(self):
+        self.compute_patient_id()
+
+    #def create(self, vals):
+        #sequence = self.env['ir.sequence'].next_by_code('lab.patient')
+        #vals['name'] = sequence or _('New')
+        #result = super(DrcEchoPatient, self).create(vals)
+        #return result
 
     @api.onchange('patient')
     def detail_get(self):

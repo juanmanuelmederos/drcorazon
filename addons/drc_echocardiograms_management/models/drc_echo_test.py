@@ -36,8 +36,13 @@ class DrcEchoTest(models.Model):
     date = fields.Datetime(string='Fecha', default=datetime.datetime.now())
     comment = fields.Text('Observaciones')
 
+    attribute_value_line_all_ids = fields.One2many('drc.echo.test.section.attribute',
+                                              'echo_test_id',
+                                              string="Valores capturados",
+                                              )
+
     template_sa_id = fields.Many2one('drc.echo.test.section.template',
-                                  string='Plantilla sección sa',
+                                  string='',
                                   domain=[('denomination_type', '=', 'sa')])
 
     attribute_value_line_sa_ids = fields.One2many('drc.echo.test.section.attribute',
@@ -80,11 +85,10 @@ class DrcEchoTest(models.Model):
                                               string="Valores sección SE",
                                               domain=[('denomination_type', '=', 'se')])
     state = fields.Selection([
-        ('draft', 'Draft'),
-        ('sample_collection', 'Sample Collected'),
-        ('test_in_progress', 'Test In Progress'),
-        ('completed', 'Completed'),
-        ('cancel', 'Cancelled'),
+        ('draft', 'Captura de datos'),
+        ('review', 'Revisión'),
+        ('completed', 'Completado'),
+        ('cancel', 'Cancelado')
 
     ], string='Status', readonly=True, copy=False, index=True, tracking=True, default='draft')
 
@@ -94,27 +98,48 @@ class DrcEchoTest(models.Model):
         vals['name'] = sequence or '/'
         return super(DrcEchoTest, self).create(vals)
 
-    @api.onchange('template_sa_id', 'template_sb_id', 'template_sc_id', 'template_sd_id', 'template_se_id')
-    def onchange_section_template(self):
+    def _get_default_template(self):
+        prefix_list = ['sa', 'sb', 'sc', 'sd', 'se']
+        for prefix in prefix_list:
+            default_template = self.env['drc.echo.test.section.template']\
+                                    .search([('denomination_type', '=', prefix)], limit=1)
+            self['template_' + prefix + '_id']= default_template.id
+
+    @api.onchange('patient_id')
+    def onchange_patient_id(self):
+        if self.patient_id:
+            self._get_default_template()
+            self.set_section_attributes_by_temmplate()
+
+    def set_section_attributes_by_temmplate(self):
         prefix_list = ['sa', 'sb', 'sc', 'sd', 'se']
         for prefix in prefix_list:
             template_id = self['template_' + prefix + '_id']
             if template_id:
                 self['attribute_value_line_' + prefix + '_ids'] = [(5, 0, 0)]
+                item_values = []
                 for attribute in template_id.attribute_ids.filtered(lambda r: r.is_template):
-                    self['attribute_value_line_' + prefix + '_ids'] = [(0, 0, {
+                    item_values.append((0, 0, {
                         'section_value': attribute.section_value,
                         'unit': attribute.unit,
                         'interval': attribute.interval,
                         'denomination_type': prefix,
                         'is_template': False,
-                    })]
+                    }))
+                if item_values:
+                    self['attribute_value_line_' + prefix + '_ids'] = item_values
+                    #field_attribute_name = 'attribute_value_line_' + prefix + '_ids'
+                    #self.update(field_attribute_name = item_values)
 
-    def set_to_sample_collection(self):
-        return self.write({'state': 'sample_collection'})
 
-    def set_to_test_in_progress(self):
-        return self.write({'state': 'test_in_progress'})
+    def set_to_review(self):
+        return self.write({'state': 'review'})
+
+    def set_to_completed(self):
+        return self.write({'state': 'completed'})
+
+    def set_to_draft(self):
+        return self.write({'state': 'draft'})
 
     def cancel_test(self):
         return self.write({'state': 'cancel'})

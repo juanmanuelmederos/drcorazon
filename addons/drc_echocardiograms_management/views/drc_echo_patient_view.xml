@@ -19,8 +19,8 @@
                                 <div class="oe_kanban_details">
                                     <strong>
                                         <ul>
-                                            <li>Name :<field name="patient"/></li>
-                                            <li>Patient ID :<field name="name"/></li>
+                                            <li>Nombre :<field name="patient"/></li>
+                                            <li>ID :<field name="name"/></li>
                                         </ul>
                                     </strong>
                                 </div>
@@ -59,7 +59,7 @@
                         <div name="title_name" class="oe_title">
                             <h3>
                                 <field name="title"
-                                    style="width: 30%%" />
+                                    style="width: 30%%"  required="1"/>
                             </h3>
                             <h1>
                                 <table>
@@ -67,7 +67,7 @@
                                         <td>
                                             <field name="patient"
                                                 required="1"
-                                                placeholder="FullName"
+                                                placeholder="Nombre completo del paciente"
                                                 style="padding-right:10px"
                                                 domain="[('is_patient','=',True)]" context="{'search_default_is_patient':1, 'default_is_patient':1, 'default_customer':1}"
                                             />
@@ -79,21 +79,21 @@
                         <group>
                             <group>
                                 <field name="name" />
-                                <field name="gender" />
-                                <field name="dob" />
+                                <field name="gender" required="1" />
+                                <field name="dob" required="1"/>
                                 <field name="age"/>
-                                <field name="phone"/>
+                                <field name="phone" required="1"/>
                             </group>
                             <group>
-                                <field name="visa_info"/>
                                 <field name="id_proof_number"/>
                                 <field name="date" invisible="1"/>
-                                <field name="blood_group"/>
                                 <field name="email"/>
+                                <field name="weight" required="1"/>
+                                <field name="size" required="1"/>
                             </group>
                         </group>
                         <notebook>
-                            <page string="Note">
+                            <page string="Nota">
                                 <group>
                                     <field name="note"/>
                                 </group>
